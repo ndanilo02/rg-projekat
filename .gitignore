@@ -20,3 +20,5 @@ engine/test/app/test-app
 app/APP
 .venv
 engine/libs/glfw/src
+build/
+app/imgui.ini

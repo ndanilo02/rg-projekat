@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(APP)
-file(GLOB sources src/*.cpp)
-file(GLOB headers include/*.hpp)
+file(GLOB_RECURSE sources src/*.cpp)
+file(GLOB_RECURSE headers include/*.hpp)
 
 include_directories(include/)
 
