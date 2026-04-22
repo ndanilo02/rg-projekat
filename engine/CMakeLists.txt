@@ -11,7 +11,7 @@ if (NOT COMPILER_SUPPORTS_CXX23)
 endif()
 
 file(GLOB engine-sources src/*.cpp)
-file(GLOB engine-headers include/engine/*.hpp)
+file(GLOB engine-headers include/engine/**/*.hpp)
 
 ################ Libs ################
 add_subdirectory(libs/spdlog EXCLUDE_FROM_ALL)
