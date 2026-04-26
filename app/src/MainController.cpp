@@ -3,6 +3,7 @@
 #include <engine/core/Engine.hpp>
 #include <engine/graphics/GraphicsController.hpp>
 #include <engine/graphics/Bloom.hpp>
+#include <engine/graphics/PointShadow.hpp>
 #include <memory>
 #include <spdlog/spdlog.h>
 
@@ -12,6 +13,7 @@ void MainController::initialize() {
     int width = config["window"]["width"];
     int height = config["window"]["height"];
     m_bloom.initialize(width, height);
+    m_point_shadow.initialize(1024);
 }
 
 bool MainController::loop() {
@@ -81,6 +83,18 @@ void MainController::update_event_chain(float dt) {
 }
 
 void MainController::begin_draw() {
+    if (m_shadows_enabled && m_point_light.enabled) {
+        m_point_shadow.bind_for_rendering();
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto depth_shader = resources->shader("point_shadow_depth");
+        m_point_shadow.set_matrices(depth_shader, m_point_light.position, 1.0f, m_far_plane);
+        draw_scene_depth(depth_shader);
+        m_point_shadow.unbind();
+        
+        auto config = engine::util::Configuration::config();
+        engine::graphics::OpenGL::set_viewport(config["window"]["width"].get<int>(), config["window"]["height"].get<int>());
+    }
+
     if (m_bloom_enabled) {
         m_bloom.bind_for_rendering();
     } else {
@@ -132,6 +146,11 @@ void MainController::set_light_uniforms(const engine::resources::Shader *shader)
     shader->set_float("pointLight.quadratic", m_point_light.quadratic);
 
     shader->set_float("material.shininess", 32.0f);
+
+    shader->set_int("depthMap", 2);
+    m_point_shadow.bind_depth_map(2);
+    shader->set_float("far_plane", m_far_plane);
+    shader->set_bool("shadows", m_shadows_enabled && m_point_light.enabled);
 }
 
 void MainController::draw_scene() {
@@ -160,6 +179,26 @@ void MainController::draw_scene() {
         event_matrix = glm::scale(event_matrix, glm::vec3(0.5f));
         shader->set_mat4("model", event_matrix);
         event_model->draw(shader);
+    }
+}
+
+void MainController::draw_scene_depth(const engine::resources::Shader *depth_shader) {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto model = resources->model("workshop");
+
+    glm::mat4 model_matrix = glm::mat4(1.0f);
+    model_matrix = glm::translate(model_matrix, glm::vec3(0.0f, 0.0f, 0.0f));
+    model_matrix = glm::scale(model_matrix, glm::vec3(1.0f));
+    depth_shader->set_mat4("model", model_matrix);
+    model->draw(depth_shader);
+
+    if (m_event_chain.object_visible) {
+        auto event_model = resources->model("event_object");
+        glm::mat4 event_matrix = glm::mat4(1.0f);
+        event_matrix = glm::translate(event_matrix, glm::vec3(2.0f, 0.5f, 0.0f));
+        event_matrix = glm::scale(event_matrix, glm::vec3(0.5f));
+        depth_shader->set_mat4("model", event_matrix);
+        event_model->draw(depth_shader);
     }
 }
 

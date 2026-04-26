@@ -74,6 +74,11 @@ void GUIController::draw() {
         ImGui::Checkbox("Enable Bloom", &main_controller->bloom_enabled());
         ImGui::SliderFloat("Exposure", &main_controller->exposure(), 0.1f, 5.0f);
     }
+    
+    // Shadows
+    if (ImGui::CollapsingHeader("Shadows", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Checkbox("Enable Shadows", &main_controller->shadows_enabled());
+    }
 
     ImGui::End();
 

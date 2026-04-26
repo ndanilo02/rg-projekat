@@ -135,6 +135,11 @@ public:
     static void clear_buffers();
 
     /**
+    * @brief Sets the viewport dimensions.
+    */
+    static void set_viewport(int width, int height);
+
+    /**
     * @brief Retrieve the shader compilation error log message.
     * @param shader_id Shader id for which the compilation failed.
     * @returns shader compilation error message.

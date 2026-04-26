@@ -1,0 +1,11 @@
+Model Information:
+* title:	Old Oil Lamp
+* source:	https://sketchfab.com/3d-models/old-oil-lamp-df670e9de0f945a2a3f5b1ef381baef7
+* author:	sujirour (https://sketchfab.com/sujirour)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Old Oil Lamp" (https://sketchfab.com/3d-models/old-oil-lamp-df670e9de0f945a2a3f5b1ef381baef7) by sujirour (https://sketchfab.com/sujirour) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

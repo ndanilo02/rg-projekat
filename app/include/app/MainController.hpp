@@ -3,6 +3,7 @@
 
 #include <engine/core/Engine.hpp>
 #include <engine/graphics/Bloom.hpp>
+#include <engine/graphics/PointShadow.hpp>
 #include <glm/glm.hpp>
 
 /**
@@ -82,6 +83,10 @@ public:
         return m_exposure;
     }
 
+    bool &shadows_enabled() {
+        return m_shadows_enabled;
+    }
+
 private:
     void initialize() override;
 
@@ -105,6 +110,8 @@ private:
 
     void draw_scene();
 
+    void draw_scene_depth(const engine::resources::Shader *depth_shader);
+
     void draw_skybox();
 
     void draw_light_cube();
@@ -112,6 +119,10 @@ private:
     engine::graphics::Bloom m_bloom;
     bool m_bloom_enabled{true};
     float m_exposure{1.0f};
+
+    engine::graphics::PointShadow m_point_shadow;
+    bool m_shadows_enabled{true};
+    float m_far_plane{25.0f};
 
     DirLight m_dir_light;
     PointLight m_point_light;
