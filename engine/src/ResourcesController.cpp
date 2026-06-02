@@ -6,6 +6,7 @@
 #include <engine/resources/ShaderCompiler.hpp>
 #include <engine/util/Configuration.hpp>
 #include <engine/util/Errors.hpp>
+#include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 #include <unordered_set>
 #include <utility>
@@ -21,16 +22,24 @@ void ResourcesController::initialize() {
 
 void ResourcesController::terminate() {
     for (auto &[name, resource]: m_models) {
-        resource->destroy();
+        if (resource) {
+            resource->destroy();
+        }
     }
     for (auto &[name, resource]: m_shaders) {
-        resource->destroy();
+        if (resource) {
+            resource->destroy();
+        }
     }
     for (auto &[name, resource]: m_textures) {
-        resource->destroy();
+        if (resource) {
+            resource->destroy();
+        }
     }
     for (auto &[name, resource]: m_sky_boxes) {
-        resource->destroy();
+        if (resource) {
+            resource->destroy();
+        }
     }
 }
 
@@ -100,9 +109,30 @@ public:
     }
 
 private:
-    void process_node(const aiNode *node);
+    static glm::mat4 ai_matrix_to_glm(const aiMatrix4x4 &from) {
+        glm::mat4 to;
+        to[0][0] = from.a1;
+        to[0][1] = from.b1;
+        to[0][2] = from.c1;
+        to[0][3] = from.d1;
+        to[1][0] = from.a2;
+        to[1][1] = from.b2;
+        to[1][2] = from.c2;
+        to[1][3] = from.d2;
+        to[2][0] = from.a3;
+        to[2][1] = from.b3;
+        to[2][2] = from.c3;
+        to[2][3] = from.d3;
+        to[3][0] = from.a4;
+        to[3][1] = from.b4;
+        to[3][2] = from.c4;
+        to[3][3] = from.d4;
+        return to;
+    }
 
-    void process_mesh(aiMesh *mesh);
+    void process_node(const aiNode *node, const glm::mat4 &parent_transform);
+
+    void process_mesh(aiMesh *mesh, const glm::mat4 &transform);
 
     std::vector<Texture *> process_materials(const aiMaterial *material);
 
@@ -176,46 +206,48 @@ Shader *ResourcesController::shader(const std::string &name, const std::filesyst
 
 std::vector<Mesh> AssimpSceneProcessor::process_meshes() {
     m_meshes.clear();
-    process_node(m_scene->mRootNode);
+    process_node(m_scene->mRootNode, glm::mat4(1.0f));
     return std::move(m_meshes);
 }
 
-void AssimpSceneProcessor::process_node(const aiNode *node) {
+void AssimpSceneProcessor::process_node(const aiNode *node, const glm::mat4 &parent_transform) {
+    glm::mat4 current_transform = parent_transform * ai_matrix_to_glm(node->mTransformation);
     for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
         auto mesh = m_scene->mMeshes[node->mMeshes[i]];
-        process_mesh(mesh);
+        process_mesh(mesh, current_transform);
     }
     for (uint32_t i = 0; i < node->mNumChildren; ++i) {
-        process_node(node->mChildren[i]);
+        process_node(node->mChildren[i], current_transform);
     }
 }
 
-void AssimpSceneProcessor::process_mesh(aiMesh *mesh) {
+void AssimpSceneProcessor::process_mesh(aiMesh *mesh, const glm::mat4 &transform) {
     std::vector<Vertex> vertices;
     vertices.reserve(mesh->mNumVertices);
+
+    glm::mat3 normal_matrix = glm::transpose(glm::inverse(glm::mat3(transform)));
+
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
         Vertex vertex{};
-        vertex.Position.x = mesh->mVertices[i].x;
-        vertex.Position.y = mesh->mVertices[i].y;
-        vertex.Position.z = mesh->mVertices[i].z;
+        glm::vec4 pos = transform * glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.0f);
+        vertex.Position.x = pos.x;
+        vertex.Position.y = pos.y;
+        vertex.Position.z = pos.z;
 
         if (mesh->HasNormals()) {
-            vertex.Normal.x = mesh->mNormals[i].x;
-            vertex.Normal.y = mesh->mNormals[i].y;
-            vertex.Normal.z = mesh->mNormals[i].z;
+            glm::vec3 normal = glm::normalize(normal_matrix * glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z));
+            vertex.Normal = normal;
         }
 
         if (mesh->mTextureCoords[0]) {
             vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
             vertex.TexCoords.y = mesh->mTextureCoords[0][i].y;
 
-            vertex.Tangent.x = mesh->mTangents[i].x;
-            vertex.Tangent.y = mesh->mTangents[i].y;
-            vertex.Tangent.z = mesh->mTangents[i].z;
+            glm::vec3 tangent = glm::normalize(normal_matrix * glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z));
+            vertex.Tangent = tangent;
 
-            vertex.Bitangent.x = mesh->mBitangents[i].x;
-            vertex.Bitangent.y = mesh->mBitangents[i].y;
-            vertex.Bitangent.z = mesh->mBitangents[i].z;
+            glm::vec3 bitangent = glm::normalize(normal_matrix * glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z));
+            vertex.Bitangent = bitangent;
         }
         vertices.push_back(vertex);
     }
@@ -231,13 +263,29 @@ void AssimpSceneProcessor::process_mesh(aiMesh *mesh) {
 
     auto material = m_scene->mMaterials[mesh->mMaterialIndex];
     std::vector<Texture *> textures = process_materials(material);
-    m_meshes.emplace_back(Mesh(vertices, indices, std::move(textures)));
+
+    aiColor4D diffuse_color(1.0f, 1.0f, 1.0f, 1.0f);
+    material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);
+
+    aiColor4D specular_color(1.0f, 1.0f, 1.0f, 1.0f);
+    material->Get(AI_MATKEY_COLOR_SPECULAR, specular_color);
+
+    glm::vec3 diff_col(diffuse_color.r, diffuse_color.g, diffuse_color.b);
+    glm::vec3 spec_col(specular_color.r, specular_color.g, specular_color.b);
+
+    if (!textures.empty()) {
+        diff_col = glm::vec3(1.0f);
+        spec_col = glm::vec3(1.0f);
+    }
+
+    m_meshes.emplace_back(Mesh(vertices, indices, std::move(textures), diff_col, spec_col));
 }
 
 std::vector<Texture *> AssimpSceneProcessor::process_materials(const aiMaterial *material) {
     std::vector<Texture *> textures;
     auto ai_texture_types = {
             aiTextureType_DIFFUSE,
+            aiTextureType_BASE_COLOR,
             aiTextureType_SPECULAR,
             aiTextureType_NORMALS,
             aiTextureType_HEIGHT,
@@ -263,6 +311,7 @@ void AssimpSceneProcessor::process_material_type(std::vector<Texture *> &texture
 TextureType AssimpSceneProcessor::assimp_texture_type_to_engine(aiTextureType type) {
     switch (type) {
         case aiTextureType_DIFFUSE: return TextureType::Diffuse;
+        case aiTextureType_BASE_COLOR: return TextureType::Diffuse;
         case aiTextureType_SPECULAR: return TextureType::Specular;
         case aiTextureType_HEIGHT: return TextureType::Height;
         case aiTextureType_NORMALS: return TextureType::Normal;

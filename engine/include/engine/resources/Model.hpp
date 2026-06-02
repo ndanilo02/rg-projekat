@@ -38,6 +38,12 @@ public:
         return m_meshes;
     }
 
+    void set_material_colors(glm::vec3 diffuse, glm::vec3 specular) {
+        for (auto &mesh: m_meshes) {
+            mesh.set_material_colors(diffuse, specular);
+        }
+    }
+
     /**
     * @brief Returns the path to the model file from which the model was loaded.
     * @returns The path to the model.

@@ -1,0 +1,11 @@
+Model Information:
+* title:	F6 Boxer Engine
+* source:	https://sketchfab.com/3d-models/f6-boxer-engine-5700259eeb494b8f8a0b8f63486c59cc
+* author:	Scuderia Morello (https://sketchfab.com/scudmorello)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "F6 Boxer Engine" (https://sketchfab.com/3d-models/f6-boxer-engine-5700259eeb494b8f8a0b8f63486c59cc) by Scuderia Morello (https://sketchfab.com/scudmorello) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

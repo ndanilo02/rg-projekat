@@ -1,12 +1,24 @@
 {
   "resources": {
     "models": {
-      "workshop": {
-        "path": "backpack/backpack.obj",
+      "welder": {
+        "path": "welder/scene.gltf",
         "flip_uvs": false
       },
-      "event_object": {
-        "path": "cube/cube.obj",
+      "broken_engine": {
+        "path": "broken_engine/scene.gltf",
+        "flip_uvs": false
+      },
+      "repaired_engine": {
+        "path": "repaired_engine/scene.gltf",
+        "flip_uvs": false
+      },
+      "room": {
+        "path": "room/scene.gltf",
+        "flip_uvs": false
+      },
+      "lamp": {
+        "path": "lamp/scene.gltf",
         "flip_uvs": false
       },
       "cube": {
@@ -17,7 +29,7 @@
   },
   "window": {
     "height": 720,
-    "title": "Abandoned Workshop (RG Projekat)",
+    "title": "Retro Garage Workshop (RG Projekat)",
     "width": 1280
   }
 }

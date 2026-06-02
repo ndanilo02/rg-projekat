@@ -48,15 +48,15 @@ public:
 private:
     void init_framebuffers(int width, int height);
 
-    unsigned int hdrFBO{0};
-    unsigned int colorBuffers[2]{0, 0};
-    unsigned int rboDepth{0};
+    unsigned int m_hdr_fbo{0};
+    unsigned int m_color_buffers[2]{0, 0};
+    unsigned int m_rbo_depth{0};
 
-    unsigned int pingpongFBO[2]{0, 0};
-    unsigned int pingpongColorbuffers[2]{0, 0};
+    unsigned int m_pingpong_fbo[2]{0, 0};
+    unsigned int m_pingpong_color_buffers[2]{0, 0};
 
-    unsigned int quadVAO{0};
-    unsigned int quadVBO{0};
+    unsigned int m_quad_vao{0};
+    unsigned int m_quad_vbo{0};
     void render_quad();
 
     int m_width{0};
@@ -64,6 +64,6 @@ private:
     bool m_initialized{false};
 };
 
-} // namespace engine::graphics
+}// namespace engine::graphics
 
-#endif // MATF_RG_PROJECT_BLOOM_HPP
+#endif// MATF_RG_PROJECT_BLOOM_HPP

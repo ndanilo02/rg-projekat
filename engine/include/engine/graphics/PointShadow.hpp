@@ -56,13 +56,13 @@ public:
     int resolution() const { return m_resolution; }
 
 private:
-    unsigned int m_depthMapFBO{0};
-    unsigned int m_depthCubemap{0};
+    unsigned int m_depth_map_fbo{0};
+    unsigned int m_depth_cubemap{0};
     int m_resolution{1024};
     float m_far_plane{25.0f};
     bool m_initialized{false};
 };
 
-} // namespace engine::graphics
+}// namespace engine::graphics
 
-#endif // MATF_RG_PROJECT_POINT_SHADOW_HPP
+#endif// MATF_RG_PROJECT_POINT_SHADOW_HPP

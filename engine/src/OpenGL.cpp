@@ -28,11 +28,21 @@ uint32_t OpenGL::generate_texture(const std::filesystem::path &path, bool flip_u
 
     int32_t width, height, nr_components;
     stbi_set_flip_vertically_on_load(flip_uvs);
-    uint8_t *data = stbi_load(path.c_str(), &width, &height, &nr_components, 0);
+    int32_t x, y, comp;
+    int32_t desired_channels = 0;
+    if (stbi_info(path.c_str(), &x, &y, &comp)) {
+        if (comp == 2) {
+            desired_channels = 4;
+        }
+    }
+    uint8_t *data = stbi_load(path.c_str(), &width, &height, &nr_components, desired_channels);
     defer {
         stbi_image_free(data);
     };
     if (data) {
+        if (desired_channels != 0) {
+            nr_components = desired_channels;
+        }
         int32_t format = texture_format(nr_components);
 
         CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, texture_id);
@@ -141,11 +151,22 @@ uint32_t OpenGL::load_skybox_textures(const std::filesystem::path &path, bool fl
     int width, height, nr_channels;
     for (const auto &file: std::filesystem::directory_iterator(path)) {
         stbi_set_flip_vertically_on_load(flip_uvs);
-        unsigned char *data = stbi_load(absolute(file).c_str(), &width, &height, &nr_channels, 0);
+        int32_t x, y, comp;
+        int32_t desired_channels = 0;
+        std::string file_path = absolute(file).string();
+        if (stbi_info(file_path.c_str(), &x, &y, &comp)) {
+            if (comp == 2) {
+                desired_channels = 4;
+            }
+        }
+        unsigned char *data = stbi_load(file_path.c_str(), &width, &height, &nr_channels, desired_channels);
         defer {
             stbi_image_free(data);
         };
         if (data) {
+            if (desired_channels != 0) {
+                nr_channels = desired_channels;
+            }
             uint32_t i = face_index(file.path().stem().c_str());
             int32_t format = texture_format(nr_channels);
             CHECKED_GL_CALL(glTexImage2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format,

@@ -1,11 +1,11 @@
 Model Information:
-* title:	Round Table Room / empty / Mozilla Hubs
-* source:	https://sketchfab.com/3d-models/round-table-room-empty-mozilla-hubs-274b152689c8457787efc366a30b2cca
-* author:	plasmaernst (https://sketchfab.com/plasmaernst)
+* title:	Garage Render Redone FREE
+* source:	https://sketchfab.com/3d-models/garage-render-redone-free-870bc832bfd64abea5a4e91a44b641a4
+* author:	Ethica (https://sketchfab.com/Ethica)
 
 Model License:
 * license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
 * requirements:	Author must be credited. Commercial use is allowed.
 
 If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
-This work is based on "Round Table Room / empty / Mozilla Hubs" (https://sketchfab.com/3d-models/round-table-room-empty-mozilla-hubs-274b152689c8457787efc366a30b2cca) by plasmaernst (https://sketchfab.com/plasmaernst) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+This work is based on "Garage Render Redone FREE" (https://sketchfab.com/3d-models/garage-render-redone-free-870bc832bfd64abea5a4e91a44b641a4) by Ethica (https://sketchfab.com/Ethica) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
