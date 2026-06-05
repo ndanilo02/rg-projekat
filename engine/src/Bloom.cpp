@@ -1,14 +1,16 @@
 #include <engine/graphics/Bloom.hpp>
 #include <engine/graphics/OpenGL.hpp>
+#include <engine/util/Errors.hpp>
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
 namespace engine::graphics {
 
-void Bloom::initialize(int width, int height) {
+void Bloom::initialize(int width, int height, int blur_amount) {
     if (m_initialized) {
         destroy();
     }
+    this->blur_amount = blur_amount;
     init_framebuffers(width, height);
     m_initialized = true;
 }
@@ -51,7 +53,7 @@ void Bloom::destroy() {
 
 void Bloom::resize(int width, int height) {
     if (m_width != width || m_height != height) {
-        initialize(width, height);
+        initialize(width, height, blur_amount);
     }
 }
 
@@ -87,7 +89,7 @@ void Bloom::init_framebuffers(int width, int height) {
     CHECKED_GL_CALL(glDrawBuffers, 2, attachments);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        spdlog::error("Framebuffer not complete!");
+        RG_ENGINE_ERROR(engine::util::EngineError::Type::OpenGLError, "Framebuffer not complete!");
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
 
     // 2. Ping-pong framebuffers for blurring
@@ -104,7 +106,7 @@ void Bloom::init_framebuffers(int width, int height) {
         CHECKED_GL_CALL(glFramebufferTexture2D, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_pingpong_color_buffers[i], 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            spdlog::error("Pingpong Framebuffer not complete!");
+            RG_ENGINE_ERROR(engine::util::EngineError::Type::OpenGLError, "Pingpong Framebuffer not complete!");
     }
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
 }

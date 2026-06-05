@@ -1,5 +1,6 @@
 #include <engine/graphics/OpenGL.hpp>
 #include <engine/graphics/PointShadow.hpp>
+#include <engine/util/Errors.hpp>
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <spdlog/spdlog.h>
@@ -35,7 +36,7 @@ void PointShadow::initialize(int resolution) {
     CHECKED_GL_CALL(glReadBuffer, GL_NONE);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        spdlog::error("PointShadow Framebuffer not complete!");
+        RG_ENGINE_ERROR(engine::util::EngineError::Type::OpenGLError, "PointShadow Framebuffer not complete!");
     }
 
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);

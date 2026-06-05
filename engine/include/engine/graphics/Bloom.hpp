@@ -15,8 +15,9 @@ public:
      * @brief Initializes the framebuffers and textures required for the Bloom effect.
      * @param width The screen width.
      * @param height The screen height.
+     * @param blur_amount The Gaussian blur iteration amount.
      */
-    void initialize(int width, int height);
+    void initialize(int width, int height, int blur_amount = 10);
 
     /**
      * @brief Cleans up the OpenGL resources.
