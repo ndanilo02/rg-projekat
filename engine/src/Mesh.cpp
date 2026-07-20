@@ -68,8 +68,6 @@ void Mesh::draw(const Shader *shader) {
     uniform_name.reserve(32);
 
     int texture_unit_index = 0;
-    bool has_diffuse = false;
-    bool has_specular = false;
 
     for (int i = 0; i < m_textures.size(); i++) {
         CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0 + texture_unit_index);
@@ -78,12 +76,6 @@ void Mesh::draw(const Shader *shader) {
         const auto count = (counts[texture_type] += 1);
         uniform_name.append(std::to_string(count));
 
-        if (texture_type == "texture_diffuse") {
-            has_diffuse = true;
-        } else if (texture_type == "texture_specular") {
-            has_specular = true;
-        }
-
         shader->set_int(uniform_name, texture_unit_index);
         CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, m_textures[i]->id());
         uniform_name.clear();
@@ -91,13 +83,13 @@ void Mesh::draw(const Shader *shader) {
     }
 
     // Bind fallback white texture if the mesh lacks diffuse or specular maps
-    if (!has_diffuse) {
+    if (counts.find("texture_diffuse") == counts.end()) {
         CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0 + texture_unit_index);
         shader->set_int("texture_diffuse1", texture_unit_index);
         CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, default_white_texture_id);
         texture_unit_index++;
     }
-    if (!has_specular) {
+    if (counts.find("texture_specular") == counts.end()) {
         CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0 + texture_unit_index);
         shader->set_int("texture_specular1", texture_unit_index);
         CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, default_white_texture_id);

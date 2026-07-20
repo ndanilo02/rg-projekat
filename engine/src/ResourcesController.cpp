@@ -22,24 +22,16 @@ void ResourcesController::initialize() {
 
 void ResourcesController::terminate() {
     for (auto &[name, resource]: m_models) {
-        if (resource) {
-            resource->destroy();
-        }
+        resource->destroy();
     }
     for (auto &[name, resource]: m_shaders) {
-        if (resource) {
-            resource->destroy();
-        }
+        resource->destroy();
     }
     for (auto &[name, resource]: m_textures) {
-        if (resource) {
-            resource->destroy();
-        }
+        resource->destroy();
     }
     for (auto &[name, resource]: m_sky_boxes) {
-        if (resource) {
-            resource->destroy();
-        }
+        resource->destroy();
     }
 }
 
