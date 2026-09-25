@@ -1,11 +1,35 @@
 {
   "resources": {
     "models": {
+      "welder": {
+        "path": "welder/scene.gltf",
+        "flip_uvs": false
+      },
+      "broken_engine": {
+        "path": "broken_engine/scene.gltf",
+        "flip_uvs": false
+      },
+      "repaired_engine": {
+        "path": "repaired_engine/scene.gltf",
+        "flip_uvs": false
+      },
+      "room": {
+        "path": "room/scene.gltf",
+        "flip_uvs": false
+      },
+      "lamp": {
+        "path": "lamp/scene.gltf",
+        "flip_uvs": false
+      },
+      "cube": {
+        "path": "cube/cube.obj",
+        "flip_uvs": false
+      }
     }
   },
   "window": {
-    "height": 600,
-    "title": "Hello, window!",
-    "width": 800
+    "height": 720,
+    "title": "Retro Garage Workshop (RG Projekat)",
+    "width": 1280
   }
 }

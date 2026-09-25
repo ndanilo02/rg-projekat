@@ -43,6 +43,11 @@ public:
     */
     void destroy();
 
+    void set_material_colors(glm::vec3 diffuse, glm::vec3 specular) {
+        m_diffuse_color = diffuse;
+        m_specular_color = specular;
+    }
+
 private:
     /**
     * @brief Constructs a Mesh object.
@@ -51,11 +56,13 @@ private:
     * @param textures The textures in the mesh.
      */
     Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices,
-         std::vector<Texture *> textures);
+         std::vector<Texture *> textures, glm::vec3 diffuse_color, glm::vec3 specular_color);
 
     uint32_t m_vao{0};
     uint32_t m_num_indices{0};
     std::vector<Texture *> m_textures;
+    glm::vec3 m_diffuse_color;
+    glm::vec3 m_specular_color;
 };
 }// namespace engine::resources
 
